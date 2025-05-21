@@ -1,0 +1,117 @@
+"Name"     = 'GoldParser C++ Like Syntax'
+"Author"   = 'Salma Elmaghawry'
+"Version"  = '1.0'
+"About"    = 'Basic C++ syntax subset for GOLD Parser'
+
+"Start Symbol" = <Program>
+
+! -------------------------------------------------
+! Character Sets
+! -------------------------------------------------
+
+
+{ID Head}      = {Letter} + [_]
+{ID Tail}      = {Alphanumeric} + [_]
+{String Chars} = {Printable} + {HT} - ["\]
+
+! -------------------------------------------------
+! Terminals
+! -------------------------------------------------
+Identifier    = {ID Head}{ID Tail}*
+StringLiteral = '"' ( {String Chars} | '\' {Printable} )* '"'
+Integer       = {digit}+
+"int"           = 'int'
+"float"         = 'float'
+"double"        = 'double'
+"char"          = 'char'
+"void"          = 'void'
+"if"            = 'if'
+"else"          = 'else'
+"while"         = 'while'
+"for"           = 'for'
+"return"        = 'return'
+
+
+                
+
+! -------------------------------------------------
+! Rules
+! -------------------------------------------------
+
+<Program> ::= <StatementList>
+
+<StatementList> ::= 
+               | <StatementList> <Statement>
+               | <Statement>
+
+<Statement> ::= <VariableDeclaration> ';'
+              | <Assignment> ';'
+              | <IfStatement>
+              | <WhileStatement>
+              | <ForStatement>
+              | <ReturnStatement> ';'
+              | <FunctionDeclaration>
+
+<VariableDeclaration> ::= <Type> Identifier
+                        | <Type> Identifier '=' <Expression>
+
+<Type> ::= 'int' | 'float' | 'double' | 'char' | 'void'
+
+<Assignment> ::= Identifier '=' <Expression>
+
+<IfStatement> ::= 'if' '(' <Expression> ')' <StatementBlock> <ElseClause>
+
+<ElseClause> ::= 
+              | 'else' <StatementBlock>
+
+<WhileStatement> ::= 'while' '(' <Expression> ')' <StatementBlock>
+
+<ForStatement> ::= 'for' '(' <ForInit> ';' <Expression> ';' <ForUpdate> ')' <StatementBlock>
+
+<ForInit> ::= 
+           | <VariableDeclaration>
+           | <Assignment>
+
+<ForUpdate> ::= 
+             | Identifier '++'
+             | Identifier '--'
+             | <Assignment>
+
+<ReturnStatement> ::= 'return' <Expression>
+
+<FunctionDeclaration> ::= <Type> Identifier '(' <ParameterList> ')' <StatementBlock>
+
+<ParameterList> ::= 
+                 | <Parameter>
+                 | <ParameterList> ',' <Parameter>
+
+<Parameter> ::= <Type> Identifier
+
+<StatementBlock> ::= '{' <StatementList> '}'
+
+<Expression> ::= <Expression> '==' <AddExpression>
+               | <Expression> '!=' <AddExpression>
+               | <Expression> '<'  <AddExpression>
+               | <Expression> '>'  <AddExpression>
+               | <Expression> '<=' <AddExpression>
+               | <Expression> '>=' <AddExpression>
+               | <AddExpression>
+
+<AddExpression> ::= <AddExpression> '+' <MulExpression>
+                 | <AddExpression> '-' <MulExpression>
+                 | <MulExpression>
+
+<MulExpression> ::= <MulExpression> '*' <UnaryExpression>
+                 | <MulExpression> '/' <UnaryExpression>
+                 | <UnaryExpression>
+
+<UnaryExpression> ::= '-' <PrimaryExpression>
+                   | '+' <PrimaryExpression>
+                   | <PrimaryExpression>
+
+<PrimaryExpression> ::= Identifier
+                     | IntegerLiteral
+                     | FloatLiteral
+                     | CharLiteral
+                     | StringLiteral
+                     | '(' <Expression> ')'
